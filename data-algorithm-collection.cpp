@@ -50,8 +50,63 @@ struct MyStack {
         return val;
     }
 };
+//  --- 4.キュー (自作) ---
+// ノードの定義
+struct Node {
+    int data;
+    Node* next;
+};
+struct MyQueue {
+    Node* front = nullptr; // 先頭（取り出し口）
+    Node* rear = nullptr;  // 末尾（入り口）
 
-// --- 4. 木構造 (二分探索木) ---
+    // データを入れる (Enqueue)
+    void enqueue(int val) {
+        Node* newNode = new Node{val, nullptr};
+        if (rear == nullptr) {
+            // キューが空の場合
+            front = rear = newNode;
+        } else {
+            // 末尾に追加して、末尾ポインタを更新
+            rear->next = newNode;
+            rear = newNode;
+        }
+        std::cout << val << " をエンキューしました。\n";
+    }
+
+    // データを取り出す (Dequeue)
+    int dequeue() {
+        if (front == nullptr) {
+            std::cout << "エラー: キューが空です。\n";
+            return -1;
+        }
+        
+        Node* temp = front;
+        int val = temp->data;
+        front = front->next;
+
+        // 最後の一つを取り出した場合、rearもnullptrにする
+        if (front == nullptr) {
+            rear = nullptr;
+        }
+
+        delete temp; // メモリ解放
+        return val;
+    }
+
+    // 中身の確認
+    void display() {
+        Node* curr = front;
+        std::cout << "Queue: [ ";
+        while (curr) {
+            std::cout << curr->data << " ";
+            curr = curr->next;
+        }
+        std::cout << "]\n";
+    }
+};
+
+// --- 5. 木構造 (二分探索木) ---
 struct TreeNode {
     int val;
     TreeNode *left, *right;
@@ -70,7 +125,7 @@ void inOrder(TreeNode* root) {
     inOrder(root->right);
 }
 
-// --- 5. ハノイの塔 ---
+// --- 6. ハノイの塔 ---
 void hanoi(int n, char from, char to, char work) {
     if (n == 0) return;
     hanoi(n - 1, from, work, to);
@@ -95,7 +150,18 @@ int main() {
     s.push(10); s.push(20);
     std::cout << "Popped: " << s.pop() << "\n\n";
 
-    std::cout << "--- 4: Tree (In-order) ---\n";
+    std::cout << "--- 4: Queue ---\n";
+    MyQueue q;
+
+    q.enqueue(10);
+    q.enqueue(20);
+    q.enqueue(30);
+    q.display();
+
+    std::cout << "デキュー: " << q.dequeue() << "\n";
+    q.display();
+    
+    std::cout << "--- 5: Tree (In-order) ---\n";
     TreeNode* root = nullptr;
     root = insertTree(root, 50);
     insertTree(root, 30);
@@ -103,14 +169,15 @@ int main() {
     inOrder(root);
     std::cout << "\n\n";
 
-    std::cout << "--- 5: Regular Expression (std::regex) ---\n";
+    std::cout << "--- 6: Regular Expression (std::regex) ---\n";
+    //正規表現
     std::string email = "user@example.com";
     std::regex pattern(R"([a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,})");
     if (std::regex_match(email, pattern)) {
         std::cout << email << " は有効なメール形式です。\n\n";
     }
 
-    std::cout << "--- 6: Hanoi (3 Disks) ---\n";
+    std::cout << "--- 7: Hanoi (3 Disks) ---\n";
     hanoi(3, 'A', 'C', 'B');
 
     return 0;
